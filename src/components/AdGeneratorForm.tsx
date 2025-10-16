@@ -4,9 +4,19 @@ import { Textarea } from './ui/Textarea';
 import { Select } from './ui/Select';
 import { Label } from './ui/Label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/Card';
+import { ImageUploader } from './ImageUploader';
 
 interface AdGeneratorFormProps {
-  onGenerate: (prompt: string, image_size: string, output_format: string) => void;
+  onGenerate: (
+    prompt: string, 
+    image_size: string, 
+    output_format: string,
+    files: {
+      productImage: File | null;
+      logo: File | null;
+      packagingDesign: File | null;
+    }
+  ) => void;
   isLoading: boolean;
   currentPrompt: string;
 }
@@ -30,6 +40,9 @@ export function AdGeneratorForm({ onGenerate, isLoading, currentPrompt }: AdGene
   const [prompt, setPrompt] = useState(currentPrompt);
   const [imageSize, setImageSize] = useState('1:1');
   const [outputFormat, setOutputFormat] = useState('png');
+  const [productImage, setProductImage] = useState<File | null>(null);
+  const [logo, setLogo] = useState<File | null>(null);
+  const [packagingDesign, setPackagingDesign] = useState<File | null>(null);
 
   useEffect(() => {
     setPrompt(currentPrompt);
@@ -38,7 +51,7 @@ export function AdGeneratorForm({ onGenerate, isLoading, currentPrompt }: AdGene
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (prompt.trim()) {
-      onGenerate(prompt, imageSize, outputFormat);
+      onGenerate(prompt, imageSize, outputFormat, { productImage, logo, packagingDesign });
     }
   };
 
@@ -46,7 +59,7 @@ export function AdGeneratorForm({ onGenerate, isLoading, currentPrompt }: AdGene
     <Card>
       <CardHeader>
         <CardTitle>Describe Your Ad</CardTitle>
-        <CardDescription>Enter a detailed prompt to generate a unique ad visual.</CardDescription>
+        <CardDescription>Enter a prompt and optionally upload brand assets.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -62,6 +75,12 @@ export function AdGeneratorForm({ onGenerate, isLoading, currentPrompt }: AdGene
               required
               className="resize-none"
             />
+          </div>
+
+          <div className="space-y-4">
+            <ImageUploader label="Product Image" onFileChange={setProductImage} />
+            <ImageUploader label="Logo" onFileChange={setLogo} />
+            <ImageUploader label="Label / Packaging Design" onFileChange={setPackagingDesign} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

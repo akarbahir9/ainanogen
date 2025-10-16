@@ -11,13 +11,22 @@ export default function App() {
   const [aspectRatio, setAspectRatio] = useState('1:1');
   const [currentPrompt, setCurrentPrompt] = useState('A sleek, futuristic electric car driving on a rainbow road in a cyberpunk city, high detail, cinematic lighting');
 
-  const handleGenerate = async (prompt: string, image_size: string, output_format: string) => {
+  const handleGenerate = async (
+    prompt: string, 
+    image_size: string, 
+    output_format: string,
+    files: {
+      productImage: File | null;
+      logo: File | null;
+      packagingDesign: File | null;
+    }
+  ) => {
     setToast(null);
     setAspectRatio(image_size);
     setCurrentPrompt(prompt);
 
     try {
-      await generateAd({ prompt, image_size, output_format });
+      await generateAd({ prompt, image_size, output_format, files });
       setToast({ message: 'Ad generated successfully!', type: 'success' });
     } catch (err: any) {
       setToast({ message: err.error || 'An unknown error occurred.', type: 'error' });
